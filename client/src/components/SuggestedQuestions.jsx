@@ -2,33 +2,55 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 
-
-
 const SuggestedQuestions = ({ questions, onQuestionClick, darkMode }) => {
+  // Animation variants for container and items
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="w-full max-w-3xl mx-auto my-8">
-      <h2 className="text-2xl font-semibold text-indigo-800 mb-6">Suggested Questions</h2>
-      <div className="grid grid-cols-2 gap-4">
+    <div className="w-full max-w-4xl mx-auto my-12 px-4">
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {questions.map((item, index) => (
           <motion.div
             key={index}
-            className="bg-amber-50 rounded-lg p-4 cursor-pointer hover:bg-amber-100 transition-colors duration-200 shadow-sm"
+            className={`relative bg-white border border-[#003478] border-2 rounded-xl p-6 cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300 ${
+              darkMode ? 'text-white' : 'text-[#003478]'
+            }`}
             onClick={() => onQuestionClick(item.question)}
-            whileHover={{ scale: 1.02 }}
+            variants={itemVariants}
+            whileHover={{ y: -5 }}
             whileTap={{ scale: 0.98 }}
           >
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center text-white">
-                  {item.icon}
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center">
+                  {React.cloneElement(item.icon, {
+                    className: 'w-8 h-8 text-[#003478]',
+                  })}
                 </div>
-                <span className="text-amber-900 font-medium">{item.description}</span>
+                <span className="text-lg font-medium">{item.description}</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-amber-600" />
+              <ChevronRight className="w-6 h-6 text-gray-400" />
             </div>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -63,7 +63,7 @@ const MessageItem = ({ msg, index, messagesLength }) => (
         <AvatarImage src={msg.type === 'user' ? '/user-avatar.png' : '/Sparkles-avatar.png'} />
         <AvatarFallback>{msg.type === 'user' ? <User size={12} /> : <Sparkles size={12} />}</AvatarFallback>
       </Avatar>
-      <span className={`font-medium text-sm sm:text-base ${msg.type === 'user' ? 'text-blue-600' : 'text-purple-600'}`}>
+      <span className={`font-medium text-sm sm:text-base ${msg.type === 'user' ? 'text-[#003478]' : 'text-purple-600'}`}>
         {msg.type === 'user' ? 'You' : 'AI'}
       </span>
     </div>
@@ -171,7 +171,7 @@ const ChatWindow = ({ messages, onSendMessage, onImageSelect, selectedImage }) =
               className="flex-grow min-h-[44px] max-h-[120px] resize-none bg-transparent border-none focus:ring-0 py-2 px-3 text-sm sm:text-base"
             />
             <label htmlFor="image-upload" className="cursor-pointer p-2">
-              <ImageIcon className="text-gray-400 hover:text-blue-500 transition-colors duration-200" size={18} />
+              <ImageIcon className="text-gray-400 hover:text-[#003478] transition-colors duration-200" size={18} />
               <input
                 id="image-upload"
                 type="file"
@@ -180,7 +180,7 @@ const ChatWindow = ({ messages, onSendMessage, onImageSelect, selectedImage }) =
                 onChange={onImageSelect}
               />
             </label>
-            <Button type="submit" size="sm" className="m-1 sm:m-2 bg-blue-500 text-white p-2 rounded-md shadow-md hover:bg-blue-600 transition-colors duration-200">
+            <Button type="submit" size="sm" className="m-1 sm:m-2 bg-[#003478] text-white p-2 rounded-md shadow-md hover:bg-blue-600 transition-colors duration-200">
               <ArrowUp size={16} strokeWidth={4} />
             </Button>
           </div>

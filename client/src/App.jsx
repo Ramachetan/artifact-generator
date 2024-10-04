@@ -4,8 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CodePreview from './components/CodePreview';
 import Header from './components/Header';
 import ChatWindow from './components/ChatWindow';
+import asciiArt from './components/Author';
 
 const App = () => {
+  console.log(asciiArt);
   const [messages, setMessages] = useState([]);
   const [previewCode, setPreviewCode] = useState('');
   const [showPreview, setShowPreview] = useState(false);
@@ -162,7 +164,7 @@ const CodePreviewContainer = ({ showPreview, previewCode, onClose, onCopy, isCop
           <CodePreview code={previewCode} onClose={onClose} />
           <button
             onClick={onCopy}
-            className="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-md shadow-md hover:bg-blue-600 transition-colors duration-200 z-10"
+            className="absolute top-4 right-4 bg-[#003478] text-white p-2 rounded-md shadow-md hover:bg-blue-600 transition-colors duration-200 z-10"
           >
             {isCopied ? <Check size={20} /> : <Copy size={20} />}
           </button>
