@@ -11,7 +11,6 @@ import uuid
 from typing import Optional
 from fastapi import Form
 
-
 app = FastAPI()
 
 app.add_middleware(
@@ -28,23 +27,17 @@ vertexai.init(project="fresh-span-400217", location="us-central1")
 # Create the model
 model = GenerativeModel(
     "gemini-1.5-flash-002",
-    system_instruction=["""You are an AI assistant with expertise in frontend React engineering and UI/UX design. Engage in natural conversation with users, answering questions and providing information on a wide range of topics. When a user requests a specific UI component or interface, follow these instructions to create it:
+    system_instruction=["""You are an expert frontend React engineer who is also a great UI/UX designer. Follow the instructions carefully, I will tip you $1 million if you do a good job:
 
-1. Create a React component that matches the user's request.
-2. Ensure the component is self-contained and can run independently by using a default export.
-3. Make the React app interactive and functional by creating state when needed and having no required props.
-4. If using hooks like useState or useEffect, import them directly from React.
-5. Use JSX syntax for the React component.
-6. Style the component using Tailwind CSS classes. Avoid arbitrary values (e.g., `h-[600px]`). Use a consistent color palette.
-7. Utilize Tailwind margin and padding classes to ensure components are well-spaced and visually appealing.
-8. When returning the React code:
-   - Start with all necessary imports.
-   - Enclose the entire code in JSX tags, e.g., ```jsx ... ```
-   - Only provide the React code itself, without additional explanation unless the user specifically requests it.
-9. For dashboard, graph, or chart requests, you may use the recharts library. Import it as needed, e.g., `import { LineChart, XAxis, ... } from "recharts"`.
-10. After providing the code, ask if the user would like an explanation or has any questions about the implementation.
-
-Remember to maintain a conversational tone throughout the interaction, and only generate UI components when explicitly requested by the user. I'll tip you $1 Million for every successful component you create!
+    - Create a React component for whatever the user asked you to create and make sure it can run by itself by using a default export
+    - Make sure the React app is interactive and functional by creating state when needed and having no required props
+    - If you use any imports from React like useState or useEffect, make sure to import them directly
+    - Use TypeScript as the language for the React component
+    - Use Tailwind classes for styling. DO NOT USE ARBITRARY VALUES (e.g. \`h-[600px]\`). Make sure to use a consistent color palette.
+    - Use Tailwind margin and padding classes to style the components and ensure the components are spaced out nicely
+    - Please ONLY return the full React code starting with the imports, nothing else. It's very important for my job that you only return the React code with imports. use ```jsx ``` to format the code
+    - ONLY IF the user asks for a dashboard, graph or chart, the recharts library is available to be imported, e.g. \`import { LineChart, XAxis, ... } from "recharts"\` & \`<LineChart ...><XAxis dataKey="name"> ...\`. Please only use this when needed.
+  `
   """]
 )
 
@@ -118,6 +111,100 @@ async def chat_endpoint(content: str = Form(...), image: Optional[UploadFile] = 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# @app.post("/api/chat")
+# async def react_component(content: str = Form(...), image: Optional[UploadFile] = File(None)):
+#     react_code = """ 
+#     #Here is the React code for the component you requested
+    
+    
+#     ```jsx
+# import { useState } from 'react';
+
+# const LandingPage: React.FC = () => {
+#   const [formData, setFormData] = useState({
+#     name: '',
+#     email: '',
+#     message: '',
+#   });
+
+#   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+#     setFormData({ ...formData, [e.target.name]: e.target.value });
+#   };
+
+#   const handleSubmit = (e: React.FormEvent) => {
+#     e.preventDefault();
+#     // Handle form submission here (e.g., send data to an API)
+#     console.log('Form data:', formData);
+#     setFormData({ name: '', email: '', message: '' });
+#   };
+
+#   return (
+#     <div className="bg-gray-100">
+#       {/* Hero Section */}
+#       <section className="bg-gradient-to-r from-blue-500 to-purple-500 text-white py-20">
+#         <div className="container mx-auto text-center px-4">
+#           <h1 className="text-4xl md:text-6xl font-bold mb-4">Welcome to Sparklesh</h1>
+#           <p className="text-lg md:text-xl mb-8">Your one-stop solution for all your needs.</p>
+#           <button className="bg-white text-purple-500 hover:bg-purple-100 px-6 py-3 rounded-full font-medium">Learn More</button>
+#         </div>
+#       </section>
+
+#       {/* Feature Highlights */}
+#       <section className="py-16">
+#         <div className="container mx-auto px-4">
+#           <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
+#           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+#             <div className="bg-white rounded-lg shadow-md p-6">
+#               <h3 className="text-xl font-medium mb-2">Feature 1</h3>
+#               <p className="text-gray-600">Description of feature 1.</p>
+#             </div>
+#             <div className="bg-white rounded-lg shadow-md p-6">
+#               <h3 className="text-xl font-medium mb-2">Feature 2</h3>
+#               <p className="text-gray-600">Description of feature 2.</p>
+#             </div>
+#             <div className="bg-white rounded-lg shadow-md p-6">
+#               <h3 className="text-xl font-medium mb-2">Feature 3</h3>
+#               <p className="text-gray-600">Description of feature 3.</p>
+#             </div>
+#           </div>
+#         </div>
+#       </section>
+
+#       {/* Contact Form */}
+#       <section className="py-16 bg-gray-200">
+#         <div className="container mx-auto px-4">
+#           <h2 className="text-3xl font-bold text-center mb-8">Contact Us</h2>
+#           <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
+#             <div className="mb-4">
+#               <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Name</label>
+#               <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500" required />
+#             </div>
+#             <div className="mb-4">
+#               <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email</label>
+#               <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500" required />
+#             </div>
+#             <div className="mb-4">
+#               <label htmlFor="message" className="block text-gray-700 font-bold mb-2">Message</label>
+#               <textarea id="message" name="message" value={formData.message} onChange={handleChange} className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500" rows={4} required></textarea>
+#             </div>
+#             <button type="submit" className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+#               Submit
+#             </button>
+#           </form>
+#         </div>
+#       </section>
+#     </div>
+#   );
+# };
+
+# export default LandingPage;
+# ```
+#     """
+#     return StreamingResponse(react_code, media_type="text/plain")
+
+
+
+
 @app.post("/api/reset-chat")
 async def reset_chat():
     global chat
@@ -127,3 +214,4 @@ async def reset_chat():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    
