@@ -159,7 +159,7 @@ const ChatWindow = ({ messages, onSendMessage, onImageSelect, selectedImage }) =
         )}
         <div ref={messageSendRef} />
       </div>
-      <div className="p-2 sm:p-4 bg-gray-50 border-t border-gray-200">
+      <div className="p-2 sm:p-4 bg-white flex items-center justify-between">
         <form onSubmit={handleSubmit} className="w-full max-w-3xl mx-auto">
           <div className="flex items-center bg-white rounded-md border border-gray-300">
             <Textarea
@@ -171,7 +171,7 @@ const ChatWindow = ({ messages, onSendMessage, onImageSelect, selectedImage }) =
               className="flex-grow min-h-[44px] max-h-[120px] resize-none bg-transparent border-none focus:ring-0 py-2 px-3 text-sm sm:text-base"
             />
             <label htmlFor="image-upload" className="cursor-pointer p-2">
-              <ImageIcon className="text-gray-400 hover:text-[#003478] transition-colors duration-200" size={18} />
+              <ImageIcon className="text-[#003478] hover:text-blue-600 transition-colors duration-200" size={22} />
               <input
                 id="image-upload"
                 type="file"

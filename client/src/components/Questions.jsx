@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calculator, Cloud, GamepadIcon, LayoutDashboard, StickyNote, Lock } from 'lucide-react';
+import { Calculator, Server, GamepadIcon, LayoutDashboard, StickyNote, Lock } from 'lucide-react';
 
 
 
@@ -25,9 +25,9 @@ const Questions = [
       icon: <StickyNote size={16} />
     },
     {
-      description: "Weather App",
-      question: "Can you help me create a weather application that displays the current weather conditions, temperature, and forecast for a specific location? I'd like the app to fetch data from a weather API and present it in a user-friendly format with icons and descriptions. How can we handle user input for different locations, provide options for metric or imperial units, and refresh the data periodically? Additionally, I'm interested in adding features like displaying weather alerts, historical data, and a multi-day forecast. How can we design the app to be easily extensible with new weather data sources or additional features?",
-      icon: <Cloud size={16} />
+        description: "Dashboard using Rest API",
+        question: `I have transaction data from a bank API (https://api.sampleapis.com/fakebank/accounts) that I'd like to visualize in an attractive, interactive dashboard. The API response looks like this: [ { "transactionDate": "2015-12-31", "description": "All Purpose Spray", "category": "Other Services", "debit": 100.84, "credit": null, "id": 1 }, { "transactionDate": "2016-01-02", "description": "Dr. FlimFlam's miracle cream", "category": "Health Care", "debit": 59.99, "credit": null, "id": 2 }, { "transactionDate": "2016-12-29", "description": "Admiral Crunch", "category": "Merchandise", "debit": 87.94, "credit": null, "id": 186 }, { "transactionDate": "2016-12-30", "description": "Bachelor Chow", "category": "Dining", "debit": 7.41, "credit": null, "id": 187 } ] Please create a React component for an attractive and informative dashboard that includes the following features: A summary of total debits and credits A breakdown of expenses by category, visualized as a pie or bar chart A list of recent transactions, sortable by date, amount, and category A line chart showing spending trends over time A search or filter function to find specific transactions The dashboard should be responsive and use modern design principles. Please use the recharts library for data visualization and Tailwind CSS for styling. Can you create this dashboard component and explain the key features of your implementation?`,
+        icon: <Server size={16} />
     },
     {
       description: "Password Generator",

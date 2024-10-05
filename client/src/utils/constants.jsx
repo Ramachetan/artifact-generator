@@ -7,6 +7,11 @@ export const dependencies = {
     "lucide-react": "latest",
     "recharts": "2.9.0",
     "react-router-dom": "latest",
+    "framer-motion": "latest",
+    "react-syntax-highlighter": "latest",
+    "react-markdown": "latest",
+    "axios": "latest",
+    "tailwindcss": "latest",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -40,6 +45,7 @@ export const dependencies = {
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
+
   };
 
 export const sharedFiles = {

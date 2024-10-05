@@ -29,11 +29,11 @@ root.render(
       }}
       options={{
         showNavigator: false,
-        showTabs: false,
+        showTabs: true,
         externalResources: [
           "https://unpkg.com/@tailwindcss/ui/dist/tailwind-ui.min.css",
         ],
-        showReadOnly:true,
+        showReadOnly:false,
         showEditor : false,
         editorHeight: "80vh",
         theme: draculaTheme,

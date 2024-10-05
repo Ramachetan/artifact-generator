@@ -5,6 +5,7 @@ import CodePreview from './components/CodePreview';
 import Header from './components/Header';
 import ChatWindow from './components/ChatWindow';
 import asciiArt from './components/Author';
+import SignInPage from './components/SignInPage';
 
 const App = () => {
   console.log(asciiArt);
@@ -14,9 +15,14 @@ const App = () => {
   const [isStreaming, setIsStreaming] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Login state
 
   useEffect(() => {
     resetChat();
+    const storedLoginStatus = localStorage.getItem('isLoggedIn');
+    if (storedLoginStatus === 'true') {
+      setIsLoggedIn(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -87,7 +93,7 @@ const App = () => {
     const botResponse = await callApi(userMessage, selectedImage);
     setIsStreaming(false);
    
-    const jsxCodeMatch = botResponse.match(/```jsx([\s\S]*?)```/);
+    const jsxCodeMatch = botResponse.match(/```tsx([\s\S]*?)```/);
     if (jsxCodeMatch) {
       setPreviewCode(jsxCodeMatch[1].trim());
     } else {
@@ -111,9 +117,23 @@ const App = () => {
     }
   }, []);
 
+  const handleSignIn = useCallback(() => {
+    setIsLoggedIn(true);
+    localStorage.setItem('isLoggedIn', 'true');
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setIsLoggedIn(false);
+    localStorage.removeItem('isLoggedIn');
+  }, []);
+
+  if (!isLoggedIn) {
+    return <SignInPage onSignIn={handleSignIn} />;
+  }
+
   return (
     <div className="flex flex-col h-screen">
-      <Header />
+      <Header onLogout={handleLogout} />
       <div className="flex-1 flex overflow-hidden">
         <ChatWindowContainer 
           showPreview={showPreview}

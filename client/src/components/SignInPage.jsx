@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Lottie from 'lottie-react';
 import animationData from '../assets/animation.json';
+import { Sparkles } from 'lucide-react';
 
 const SignInPage = ({ onSignIn }) => {
   const [username, setUsername] = useState('');
@@ -14,6 +15,7 @@ const SignInPage = ({ onSignIn }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Simple authentication logic
     if (username === 'admin' && password === 'admin') {
       onSignIn();
     } else {
@@ -22,22 +24,29 @@ const SignInPage = ({ onSignIn }) => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#FFF]">
-      <div className="flex w-full max-w-5xl bg-white/40 shadow-3xl rounded-r-3xl">
-        <div className="w-2/5 p-8 flex items-center justify-center bg-[#001F3F] rounded-l-3xl">
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="flex w-full max-w-5xl shadow-lg rounded-3xl overflow-hidden">
+        {/* Left Side */}
+        <div className="w-2/5 p-8 flex items-center justify-center bg-gray-100">
           <Lottie animationData={animationData} className="w-full h-full" />
         </div>
-        <Card className="w-3/5 bg-transparent shadow-none">
+        {/* Right Side */}
+        <Card className="w-3/5 bg-gray-200">
           <CardContent className="p-12">
+            {/* Header */}
             <div className="text-center mb-8">
-              <img src="https://www.ford.com/cmslibs/etc/designs/brand_ford/brand/skin/ford/img/bri-icons/Ford-logo.svg" alt="Ford Logo" className="h-16 mx-auto mb-4" />
-              <h2 className="text-3xl font-bold text-[#003478]">Ford Performance RapidTag</h2>
-              <p className="text-sm text-gray-600 mt-2">Instant Image Tagging for Race Teams</p>
+              <Sparkles className="w-12 h-12 mx-auto text-[#003478] mb-4" />
+              <h2 className="text-4xl font-bold text-[#003478]">Headstart UI</h2>
+              <p className="text-lg text-gray-500 mt-2">Gen AI-Powered Interface Design</p>
             </div>
-            
+
+            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Username Field */}
               <div className="space-y-2">
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+                <label htmlFor="username" className="block text-sm font-semibold text-gray-700">
+                  Username
+                </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                   <Input
@@ -45,15 +54,18 @@ const SignInPage = ({ onSignIn }) => {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="pl-10 w-full rounded-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    className="pl-10 w-full rounded-md border border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
                     placeholder="Enter your username"
                     required
                   />
                 </div>
               </div>
-              
+
+              {/* Password Field */}
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
+                  Password
+                </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                   <Input
@@ -61,31 +73,28 @@ const SignInPage = ({ onSignIn }) => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 w-full rounded-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    className="pl-10 w-full rounded-md border border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
                     placeholder="Enter your password"
                     required
                   />
                 </div>
               </div>
+
+              {/* Error Message */}
               {error && (
-                <Alert variant="destructive" className="rounded-lg">
+                <Alert variant="destructive" className="rounded-md">
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              <Button type="submit" className="w-full bg-[#003478] hover:bg-[#002356] text-white rounded-full py-3 text-lg font-semibold transition-all duration-200 ease-in-out transform hover:scale-105">
+
+              {/* Sign In Button */}
+              <Button
+                type="submit"
+                className="w-full bg-[#003478] hover:bg-blue-600 text-white rounded-md py-3 text-lg font-semibold transition-colors duration-200"
+              >
                 Sign In
               </Button>
             </form>
-            <div className="mt-8 text-center">
-              <div className="text-sm text-gray-600 flex flex-col items-center justify-center">
-                <p>Powered by</p>
-                <img 
-                  src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg" 
-                  alt="Gemini Logo" 
-                  className="h-7 mt-2" 
-                />
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
