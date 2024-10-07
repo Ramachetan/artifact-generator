@@ -41,28 +41,34 @@ const App = () => {
     }
   };
 
-  const callApi = useCallback(async (userMessage, image) => {
+  const callApi = useCallback(async (userMessage, image, userSettings) => {
     try {
       const formData = new FormData();
       formData.append('content', userMessage);
       if (image) {
         formData.append('image', image);
       }
-
+  
+      // Add settings to the formData
+      formData.append('max_output_tokens', userSettings.max_output_tokens);
+      formData.append('temperature', userSettings.temperature);
+      formData.append('top_p', userSettings.top_p);
+      formData.append('model_name', userSettings.model_name);
+  
       const response = await fetch('http://localhost:8000/api/chat', {
         method: 'POST',
         body: formData
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-
+  
       let streamedResponse = '';
-
+  
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -74,15 +80,16 @@ const App = () => {
           return newMessages;
         });
       }
-
+  
       return streamedResponse;
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
       return "Sorry, there was an error processing your request.";
     }
   }, []);
+  
 
-  const handleSendMessage = useCallback(async (userMessage) => {
+  const handleSendMessage = useCallback(async (userMessage, userSettings) => {
     setMessages(prev => [
       ...prev, 
       { type: 'user', content: userMessage, image: selectedImage }, 
@@ -90,7 +97,7 @@ const App = () => {
     ]);
    
     setIsStreaming(true);
-    const botResponse = await callApi(userMessage, selectedImage);
+    const botResponse = await callApi(userMessage, selectedImage, userSettings);
     setIsStreaming(false);
    
     const jsxCodeMatch = botResponse.match(/```tsx([\s\S]*?)```/);
@@ -99,9 +106,10 @@ const App = () => {
     } else {
       setPreviewCode('');
     }
-
+  
     setSelectedImage(null);
   }, [selectedImage, callApi]);
+  
 
   const handleCopyCode = useCallback(() => {
     navigator.clipboard.writeText(previewCode).then(() => {
@@ -130,6 +138,29 @@ const App = () => {
   if (!isLoggedIn) {
     return <SignInPage onSignIn={handleSignIn} />;
   }
+
+  const CodePreviewContainer = ({ showPreview, previewCode, onClose, onCopy, isCopied }) => (
+    <AnimatePresence>
+      {showPreview && (
+        <motion.div
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: "50%" }}
+          exit={{ opacity: 0, width: 0 }}
+          transition={{ duration: 0.3 }}
+          className="overflow-hidden"
+        >
+          <div className="h-full bg-white shadow-lg">
+            <CodePreview 
+              code={previewCode} 
+              onClose={onClose}
+              onCopy={onCopy}
+              isCopied={isCopied}
+            />
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 
   return (
     <div className="flex flex-col h-screen">
