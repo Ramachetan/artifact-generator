@@ -25,7 +25,7 @@ const SignInPage = ({ onSignIn }) => {
     <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="flex w-full max-w-7xl bg-white shadow-2xl rounded-3xl overflow-hidden">
         {/* Left Side - Animation */}
-        <div className="w-1/2 bg-amber-50 flex items-center justify-center p-8">
+        <div className="w-1/2 bg-white border-r border-gray-200 flex items-center justify-center p-8">
           <Lottie animationData={animationData} className="w-full h-full" />
         </div>
 
