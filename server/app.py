@@ -10,25 +10,39 @@ import uuid
 from typing import Optional
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Configure this appropriately for production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Configuration from environment variables
+GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
+GOOGLE_CLOUD_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+STORAGE_BUCKET_NAME = os.getenv("STORAGE_BUCKET_NAME")
+SYSTEM_INSTRUCTION_PATH = os.getenv("SYSTEM_INSTRUCTION_PATH", "system_instruction.md")
 
-vertexai.init(project="fresh-span-400217", location="us-central1")
+# Initialize Vertex AI with environment variables
+vertexai.init(project=GOOGLE_CLOUD_PROJECT, location=GOOGLE_CLOUD_LOCATION)
 
-with open("system_instruction.md", "r") as f:
-    system_instruction = f.read()
+# Load system instruction
+def load_system_instruction():
+    try:
+        with open(SYSTEM_INSTRUCTION_PATH, "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        return ""  # Or set a default instruction
 
-
-
+system_instruction = load_system_instruction()
 
 safety_settings = [
     SafetySetting(category=category, threshold=SafetySetting.HarmBlockThreshold.BLOCK_NONE)
@@ -44,15 +58,15 @@ class Message(BaseModel):
     content: str
     image: Optional[str] = None
 
-
 thread_pool = ThreadPoolExecutor(max_workers=10)
-
-
 chat_sessions = {}
 
 async def upload_to_gcs(file: UploadFile):
+    if not STORAGE_BUCKET_NAME:
+        raise HTTPException(status_code=500, detail="Storage bucket not configured")
+    
     storage_client = storage.Client()
-    bucket = storage_client.bucket("uixgenius")
+    bucket = storage_client.bucket(STORAGE_BUCKET_NAME)
     filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}"
     blob = bucket.blob(f"images/{filename}")
     
@@ -60,9 +74,16 @@ async def upload_to_gcs(file: UploadFile):
         blob.upload_from_file(file.file)
     
     await asyncio.get_event_loop().run_in_executor(thread_pool, upload)
-    return f"gs://uixgenius/images/{filename}"
+    return f"gs://{STORAGE_BUCKET_NAME}/images/{filename}"
 
-async def generate_response(message: str, image_uri: Optional[str] = None, max_output_tokens: int = 8192, temperature: float = 0.2, top_p: float = 0.9, model_name: str = "gemini-1.5-flash-002"):
+async def generate_response(
+    message: str, 
+    image_uri: Optional[str] = None, 
+    max_output_tokens: int = 8192, 
+    temperature: float = 0.2, 
+    top_p: float = 0.9, 
+    model_name: str = "gemini-1.5-flash-002"
+):
     content = [message]
     if image_uri:
         content.insert(0, Part.from_uri(image_uri, mime_type="image/jpeg"))
@@ -74,8 +95,8 @@ async def generate_response(message: str, image_uri: Optional[str] = None, max_o
     }
     
     model = GenerativeModel(
-    model_name,
-    system_instruction=system_instruction
+        model_name,
+        system_instruction=system_instruction
     )
     
     chat = chat_sessions.get(asyncio.current_task().get_name())
@@ -106,7 +127,6 @@ async def chat_endpoint(
     image: Optional[UploadFile] = File(None),
     model_name: str = Form(...),
 ):
-    
     try:
         image_uri = None
         if image:
@@ -121,11 +141,14 @@ async def chat_endpoint(
 
 @app.post("/api/reset-chat")
 async def reset_chat(background_tasks: BackgroundTasks):
+    if not STORAGE_BUCKET_NAME:
+        raise HTTPException(status_code=500, detail="Storage bucket not configured")
+        
     chat_sessions.clear()
     
     async def delete_gcs_images():
         storage_client = storage.Client()
-        bucket = storage_client.bucket("uixgenius")
+        bucket = storage_client.bucket(STORAGE_BUCKET_NAME)
         blobs = bucket.list_blobs(prefix="images/")
         for blob in blobs:
             await asyncio.get_event_loop().run_in_executor(thread_pool, blob.delete)
@@ -135,17 +158,15 @@ async def reset_chat(background_tasks: BackgroundTasks):
 
 @app.get("/api/get-prompt")
 async def get_prompt():
-    with open("system_instruction.md", "r") as f:
-        prompt = f.read()
-    
-    return {"prompt": prompt}
-
+    return {"prompt": system_instruction}
 
 @app.post("/api/edit-prompt")
 async def edit_prompt(message: Message):
-    with open("system_instruction.md", "w") as f:
+    with open(SYSTEM_INSTRUCTION_PATH, "w") as f:
         f.write(message.content)
     
+    global system_instruction
+    system_instruction = message.content
     return {"message": "Prompt edited successfully"}
 
 if __name__ == "__main__":
